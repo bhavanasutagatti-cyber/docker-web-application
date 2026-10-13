@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Manager | DevOps Project</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 30px 16px;
+    }
+    .container { max-width: 850px; margin: auto; }
+    h1 { color: #38bdf8; }
+    .subtitle { color: #94a3b8; }
+    .panel {
+      background: #172033;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 22px;
+      margin-top: 22px;
+    }
+    .form {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    input, select, button {
+      padding: 12px;
+      border-radius: 7px;
+      border: 1px solid #475569;
+      font-size: 15px;
+    }
+    input { flex: 1; min-width: 180px; }
+    input, select {
+      background: #0f172a;
+      color: white;
+    }
+    button {
+      background: #0284c7;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+    button:hover { background: #0369a1; }
+    .task {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #334155;
+      padding: 15px 0;
+    }
+    .task:last-child { border-bottom: none; }
+    .task.done .task-name {
+      text-decoration: line-through;
+      color: #94a3b8;
+    }
+    .task-name { overflow-wrap: anywhere; }
+    .actions { display: flex; gap: 8px; }
+    .delete { background: #dc2626; }
+    .delete:hover { background: #b91c1c; }
+    .stats { color: #7dd3fc; margin-top: 15px; }
+    .back { color: #7dd3fc; text-decoration: none; }
+    footer { margin-top: 25px; color: #94a3b8; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <a class="back" href="index.html">← Back to DevOps Dashboard</a>
+    <h1>My Task Manager</h1>
+    <p class="subtitle">Organize tasks, track progress, and get things done.</p>
+
+    <section class="panel">
+      <h2>Add a task</h2>
+      <form id="task-form" class="form">
+        <input id="task-input" type="text"
+          placeholder="Enter a task..." maxlength="150" required>
+        <select id="task-priority" aria-label="Task priority">
+          <option value="Low">Low priority</option>
+          <option value="Medium" selected>Medium priority</option>
+          <option value="High">High priority</option>
+        </select>
+        <button type="submit">Add Task</button>
+      </form>
+      <p id="stats" class="stats">0 tasks</p>
+    </section>
+
+    <section class="panel">
+      <h2>My Tasks</h2>
+      <div id="task-list">
+        <p class="subtitle">No tasks yet. Add your first task above!</p>
+      </div>
+    </section>
+
+    <footer>
+      DevOps Capstone · Task Manager · HTML, CSS and JavaScript
+    </footer>
+  </main>
+
+  <script>
+    const form = document.getElementById("task-form");
+    const input = document.getElementById("task-input");
+    const priority = document.getElementById("task-priority");
+    const list = document.getElementById("task-list");
+    const stats = document.getElementById("stats");
+
+    let tasks = [];
+
+    function renderTasks() {
+      list.replaceChildren();
+
+      if (tasks.length === 0) {
+        const empty = document.createElement("p");
+        empty.className = "subtitle";
+        empty.textContent = "No tasks yet. Add your first task above!";
+        list.appendChild(empty);
+      }
+
+      tasks.forEach(task => {
+        const row = document.createElement("div");
+        row.className = "task" + (task.done ? " done" : "");
+
+        const details = document.createElement("div");
+        const name = document.createElement("div");
+        name.className = "task-name";
+        name.textContent = task.name;
+
+        const label = document.createElement("small");
+        label.className = "subtitle";
+        label.textContent = "Priority: " + task.priority;
+
+        details.append(name, label);
+
+        const actions = document.createElement("div");
+        actions.className = "actions";
+
+        const toggle = document.createElement("button");
+        toggle.textContent = task.done ? "Undo" : "Complete";
+        toggle.addEventListener("click", () => {
+          task.done = !task.done;
+          renderTasks();
+        });
+
+        const remove = document.createElement("button");
+        remove.className = "delete";
+        remove.textContent = "Delete";
+        remove.addEventListener("click", () => {
+          tasks = tasks.filter(item => item.id !== task.id);
+          renderTasks();
+        });
+
+        actions.append(toggle, remove);
+        row.append(details, actions);
+        list.appendChild(row);
+      });
+
+      const completed = tasks.filter(task => task.done).length;
+      stats.textContent =
+        `${tasks.length} total · ${completed} completed · ${tasks.length - completed} remaining`;
+    }
+
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+
+      const name = input.value.trim();
+      if (!name) return;
+
+      tasks.push({
+        id: Date.now() + Math.random(),
+        name,
+        priority: priority.value,
+        done: false
+      });
+
+      input.value = "";
+      renderTasks();
+      input.focus();
+    });
+
+    renderTasks();
+  </script>
+</body>
+</html>
