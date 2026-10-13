@@ -3,55 +3,399 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Docker Web Application</title>
-    <link rel="stylesheet" href="style.css">
+
+    <title>DevOps Capstone Dashboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0b1120;
+            color: #e2e8f0;
+        }
+
+        header {
+            background: #111c30;
+            padding: 22px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #26354d;
+        }
+
+        header h2 {
+            color: #38bdf8;
+        }
+
+        header span {
+            color: #22c55e;
+            font-size: 14px;
+        }
+
+        .hero {
+            padding: 65px 7% 45px;
+            background: linear-gradient(120deg, #10213d, #142b49);
+        }
+
+        .hero .tag {
+            color: #38bdf8;
+            font-size: 13px;
+            letter-spacing: 2px;
+            margin-bottom: 18px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
+
+        .hero h1 span {
+            color: #38bdf8;
+        }
+
+        .hero p {
+            color: #b5c3d8;
+            line-height: 1.8;
+            max-width: 650px;
+        }
+
+        .button {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 22px;
+            background: #0284c7;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+        }
+
+        main {
+            padding: 35px 7%;
+        }
+
+        .section-title {
+            font-size: 23px;
+            margin-bottom: 22px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: #111c30;
+            padding: 23px;
+            border: 1px solid #26354d;
+            border-radius: 12px;
+        }
+
+        .card .icon {
+            font-size: 28px;
+            margin-bottom: 16px;
+        }
+
+        .card h3 {
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .card p {
+            font-size: 13px;
+            color: #9eacc2;
+            line-height: 1.7;
+        }
+
+        .status {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 6px 10px;
+            border-radius: 20px;
+            background: #123c32;
+            color: #4ade80;
+            font-size: 12px;
+        }
+
+        .pipeline {
+            background: #111c30;
+            border: 1px solid #26354d;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 40px;
+        }
+
+        .pipeline-steps {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .step {
+            background: #1b2a41;
+            padding: 18px 8px;
+            text-align: center;
+            border-radius: 8px;
+        }
+
+        .step strong {
+            display: block;
+            margin-bottom: 10px;
+            color: #38bdf8;
+        }
+
+        .step small {
+            color: #a9b8cd;
+        }
+
+        .project-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .info-box {
+            background: #111c30;
+            border: 1px solid #26354d;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .info-box h3 {
+            margin-bottom: 15px;
+            color: #38bdf8;
+        }
+
+        .info-box p {
+            color: #a9b8cd;
+            line-height: 1.9;
+            font-size: 14px;
+        }
+
+        .tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .tech span {
+            background: #1b2a41;
+            border: 1px solid #354965;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: #8292aa;
+            background: #111c30;
+            border-top: 1px solid #26354d;
+            font-size: 13px;
+        }
+
+        @media (max-width: 850px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .pipeline-steps {
+                grid-template-columns: 1fr;
+            }
+
+            .project-info {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 32px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+        }
+    </style>
 </head>
+
 <body>
 
-    <header>
-        <h1>Docker Web Application</h1>
-        <p>Welcome to My Containerized Website</p>
-    </header>
+<header>
+    <h2>⚡ DevOps Hub</h2>
+    <span>● Capstone Project</span>
+</header>
 
-    <nav>
-        <a href="#home">Home</a>
-        <a href="#about">About</a>
-        <a href="#services">Services</a>
-        <a href="#contact">Contact</a>
-    </nav>
+<section class="hero">
+    <div class="tag">CLOUD • AUTOMATION • DEPLOYMENT</div>
 
-    <section id="home" class="hero">
-        <h2>Learn Docker and Containerization</h2>
-        <p>Build, deploy, and run applications using Docker.</p>
-        <button onclick="showMessage()">Get Started</button>
-        <p id="message"></p>
-    </section>
+    <h1>DevOps <span>Dashboard</span></h1>
 
-    <section id="about">
-        <h2>About This Project</h2>
-        <p>This website demonstrates how to containerize a web application using Docker.</p>
-    </section>
+    <p>
+        Welcome to my DevOps Capstone Project.
+        This project demonstrates a web application,
+        Docker containerization, automated builds,
+        testing workflows, and website deployment.
+    </p>
 
-    <section id="services">
-        <h2>What I Am Learning</h2>
-        <div class="cards">
-            <div class="card">Docker Images</div>
-            <div class="card">Docker Containers</div>
-            <div class="card">Container Networking</div>
+    <a class="button"
+       href="https://github.com/bhavanasutagatti-cyber/docker-web-application"
+       target="_blank">
+        Explore GitHub →
+    </a>
+</section>
+
+<main>
+
+    <h2 class="section-title">Project Overview</h2>
+
+    <section class="cards">
+
+        <div class="card">
+            <div class="icon">🐳</div>
+            <h3>Docker</h3>
+            <p>
+                Containerize the web application
+                using a Dockerfile.
+            </p>
+            <span class="status">Configured</span>
         </div>
+
+        <div class="card">
+            <div class="icon">⚙️</div>
+            <h3>CI/CD Pipeline</h3>
+            <p>
+                Automate application builds using
+                GitHub Actions.
+            </p>
+            <span class="status">Build Passed</span>
+        </div>
+
+        <div class="card">
+            <div class="icon">🧪</div>
+            <h3>Automated Testing</h3>
+            <p>
+                Check whether essential website
+                files exist in the repository.
+            </p>
+            <span class="status">Test Passed</span>
+        </div>
+
+        <div class="card">
+            <div class="icon">🌐</div>
+            <h3>Deployment</h3>
+            <p>
+                Publish the website using
+                GitHub Pages.
+            </p>
+            <span class="status">Website Published</span>
+        </div>
+
     </section>
 
-    <footer id="contact">
-        <p>Created as part of Codomax Module 4</p>
-        <p>Docker & Containerization</p>
-    </footer>
+    <section class="pipeline">
 
-    <script>
-        function showMessage() {
-            document.getElementById("message").innerText =
-                "Welcome! My Docker Web Application is ready.";
-        }
-    </script>
+        <h2 class="section-title">DevOps Pipeline</h2>
+
+        <p>
+            An overview of the development and deployment process.
+        </p>
+
+        <div class="pipeline-steps">
+
+            <div class="step">
+                <strong>01. CODE</strong>
+                <small>GitHub</small>
+            </div>
+
+            <div class="step">
+                <strong>02. BUILD</strong>
+                <small>Docker</small>
+            </div>
+
+            <div class="step">
+                <strong>03. TEST</strong>
+                <small>GitHub Actions</small>
+            </div>
+
+            <div class="step">
+                <strong>04. DEPLOY</strong>
+                <small>GitHub Pages</small>
+            </div>
+
+            <div class="step">
+                <strong>05. MONITOR</strong>
+                <small>Workflow Status</small>
+            </div>
+
+        </div>
+
+    </section>
+
+    <h2 class="section-title">Technology Stack</h2>
+
+    <section class="project-info">
+
+        <div class="info-box">
+            <h3>🛠 Technologies Used</h3>
+
+            <p>
+                The project uses web development tools,
+                containerization, version control,
+                and workflow automation.
+            </p>
+
+            <div class="tech">
+                <span>HTML</span>
+                <span>CSS</span>
+                <span>Docker</span>
+                <span>GitHub</span>
+                <span>GitHub Actions</span>
+                <span>CI/CD</span>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>📊 Project Monitoring</h3>
+
+            <p>
+                GitHub Actions provides workflow run
+                results that help track whether builds
+                and automated tests succeed or fail.
+            </p>
+
+            <a class="button"
+               href="https://github.com/bhavanasutagatti-cyber/docker-web-application/actions"
+               target="_blank">
+                View Workflow Runs →
+            </a>
+        </div>
+
+    </section>
+
+</main>
+
+<footer>
+    DevOps Capstone Project | Docker Web Application
+    <br><br>
+    Built with HTML, CSS, Docker and GitHub Actions
+</footer>
 
 </body>
 </html>
