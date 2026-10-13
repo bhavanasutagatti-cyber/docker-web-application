@@ -33,16 +33,16 @@
         }
 
         header span {
-            color: #22c55e;
-            font-size: 14px;
+            color: #4ade80;
+            font-size: 13px;
         }
 
         .hero {
-            padding: 65px 7% 45px;
+            padding: 65px 7% 50px;
             background: linear-gradient(120deg, #10213d, #142b49);
         }
 
-        .hero .tag {
+        .tag {
             color: #38bdf8;
             font-size: 13px;
             letter-spacing: 2px;
@@ -51,7 +51,7 @@
 
         .hero h1 {
             font-size: 42px;
-            margin-bottom: 15px;
+            margin-bottom: 18px;
         }
 
         .hero h1 span {
@@ -61,17 +61,22 @@
         .hero p {
             color: #b5c3d8;
             line-height: 1.8;
-            max-width: 650px;
+            max-width: 700px;
         }
 
         .button {
             display: inline-block;
-            margin-top: 25px;
-            padding: 12px 22px;
+            margin: 20px 10px 0 0;
+            padding: 12px 20px;
             background: #0284c7;
             color: white;
             text-decoration: none;
             border-radius: 7px;
+        }
+
+        .button.secondary {
+            background: #1e293b;
+            border: 1px solid #475569;
         }
 
         main {
@@ -85,7 +90,7 @@
 
         .cards {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 18px;
             margin-bottom: 40px;
         }
@@ -97,30 +102,45 @@
             border-radius: 12px;
         }
 
-        .card .icon {
-            font-size: 28px;
-            margin-bottom: 16px;
+        .icon {
+            font-size: 30px;
+            margin-bottom: 15px;
         }
 
         .card h3 {
-            font-size: 16px;
+            font-size: 17px;
             margin-bottom: 12px;
         }
 
         .card p {
-            font-size: 13px;
             color: #9eacc2;
+            font-size: 13px;
             line-height: 1.7;
         }
 
         .status {
             display: inline-block;
             margin-top: 15px;
-            padding: 6px 10px;
+            padding: 7px 11px;
             border-radius: 20px;
+            background: #26354d;
+            color: #cbd5e1;
+            font-size: 12px;
+        }
+
+        .status.success {
             background: #123c32;
             color: #4ade80;
-            font-size: 12px;
+        }
+
+        .status.failure {
+            background: #451a24;
+            color: #fda4af;
+        }
+
+        .status.running {
+            background: #422006;
+            color: #fcd34d;
         }
 
         .pipeline {
@@ -131,16 +151,21 @@
             margin-bottom: 40px;
         }
 
+        .pipeline p {
+            color: #9eacc2;
+            line-height: 1.7;
+        }
+
         .pipeline-steps {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(5, minmax(0, 1fr));
             gap: 12px;
             margin-top: 25px;
         }
 
         .step {
             background: #1b2a41;
-            padding: 18px 8px;
+            padding: 20px 8px;
             text-align: center;
             border-radius: 8px;
         }
@@ -157,7 +182,7 @@
 
         .project-info {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 20px;
             margin-bottom: 40px;
         }
@@ -195,6 +220,13 @@
             font-size: 13px;
         }
 
+        .refresh-note {
+            margin-top: 12px;
+            color: #8292aa;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
         footer {
             text-align: center;
             padding: 25px;
@@ -202,11 +234,12 @@
             background: #111c30;
             border-top: 1px solid #26354d;
             font-size: 13px;
+            line-height: 1.8;
         }
 
-        @media (max-width: 850px) {
+        @media (max-width: 900px) {
             .cards {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
 
             .pipeline-steps {
@@ -216,13 +249,9 @@
             .project-info {
                 grid-template-columns: 1fr;
             }
-
-            .hero h1 {
-                font-size: 32px;
-            }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 500px) {
             .cards {
                 grid-template-columns: 1fr;
             }
@@ -230,6 +259,10 @@
             header {
                 gap: 12px;
                 flex-wrap: wrap;
+            }
+
+            .hero h1 {
+                font-size: 32px;
             }
         }
     </style>
@@ -239,7 +272,7 @@
 
 <header>
     <h2>⚡ DevOps Hub</h2>
-    <span>● Capstone Project</span>
+    <span>● CAPSTONE PROJECT</span>
 </header>
 
 <section class="hero">
@@ -249,15 +282,22 @@
 
     <p>
         Welcome to my DevOps Capstone Project.
-        This project demonstrates a web application,
+        This project demonstrates web development,
         Docker containerization, automated builds,
-        testing workflows, and website deployment.
+        testing workflows, and website deployment
+        using GitHub tools.
     </p>
 
     <a class="button"
        href="https://github.com/bhavanasutagatti-cyber/docker-web-application"
-       target="_blank">
+       target="_blank" rel="noopener noreferrer">
         Explore GitHub →
+    </a>
+
+    <a class="button secondary"
+       href="https://github.com/bhavanasutagatti-cyber/docker-web-application/actions"
+       target="_blank" rel="noopener noreferrer">
+        View GitHub Actions →
     </a>
 </section>
 
@@ -271,40 +311,49 @@
             <div class="icon">🐳</div>
             <h3>Docker</h3>
             <p>
-                Containerize the web application
-                using a Dockerfile.
+                A Dockerfile defines how to package
+                the web application into a container image.
             </p>
-            <span class="status">Configured</span>
+            <span class="status">Docker Configuration</span>
         </div>
 
         <div class="card">
             <div class="icon">⚙️</div>
-            <h3>CI/CD Pipeline</h3>
+            <h3>Build Workflow</h3>
             <p>
-                Automate application builds using
-                GitHub Actions.
+                GitHub Actions runs the workflow
+                that builds the Docker image.
             </p>
-            <span class="status">Build Passed</span>
+            <span class="status" id="build-status">
+                Checking status...
+            </span>
         </div>
 
         <div class="card">
             <div class="icon">🧪</div>
-            <h3>Automated Testing</h3>
+            <h3>Test Workflow</h3>
             <p>
-                Check whether essential website
-                files exist in the repository.
+                Automated checks verify that
+                essential website files exist.
             </p>
-            <span class="status">Test Passed</span>
+            <span class="status" id="test-status">
+                Checking status...
+            </span>
         </div>
 
         <div class="card">
             <div class="icon">🌐</div>
-            <h3>Deployment</h3>
+            <h3>Website Deployment</h3>
             <p>
-                Publish the website using
-                GitHub Pages.
+                GitHub Pages publishes the website
+                from the repository.
             </p>
-            <span class="status">Website Published</span>
+
+            <a class="button"
+               href="https://bhavanasutagatti-cyber.github.io/docker-web-application/"
+               target="_blank" rel="noopener noreferrer">
+                Open Website →
+            </a>
         </div>
 
     </section>
@@ -314,19 +363,21 @@
         <h2 class="section-title">DevOps Pipeline</h2>
 
         <p>
-            An overview of the development and deployment process.
+            The workflow demonstrates source control,
+            Docker image building, automated testing,
+            website deployment, and workflow monitoring.
         </p>
 
         <div class="pipeline-steps">
 
             <div class="step">
                 <strong>01. CODE</strong>
-                <small>GitHub</small>
+                <small>GitHub Repository</small>
             </div>
 
             <div class="step">
                 <strong>02. BUILD</strong>
-                <small>Docker</small>
+                <small>Docker Image</small>
             </div>
 
             <div class="step">
@@ -341,7 +392,7 @@
 
             <div class="step">
                 <strong>05. MONITOR</strong>
-                <small>Workflow Status</small>
+                <small>Workflow Results</small>
             </div>
 
         </div>
@@ -356,7 +407,7 @@
             <h3>🛠 Technologies Used</h3>
 
             <p>
-                The project uses web development tools,
+                This project uses web technologies,
                 containerization, version control,
                 and workflow automation.
             </p>
@@ -368,23 +419,35 @@
                 <span>GitHub</span>
                 <span>GitHub Actions</span>
                 <span>CI/CD</span>
+                <span>GitHub Pages</span>
             </div>
         </div>
 
         <div class="info-box">
-            <h3>📊 Project Monitoring</h3>
+            <h3>📊 Workflow Monitoring</h3>
 
             <p>
-                GitHub Actions provides workflow run
-                results that help track whether builds
-                and automated tests succeed or fail.
+                Check the actual results of your
+                automated build and test workflows.
+                The dashboard fetches the latest
+                available run for each workflow.
             </p>
 
             <a class="button"
                href="https://github.com/bhavanasutagatti-cyber/docker-web-application/actions"
-               target="_blank">
-                View Workflow Runs →
+               target="_blank" rel="noopener noreferrer">
+                View All Workflow Runs →
             </a>
+
+            <button class="button secondary"
+                    type="button"
+                    onclick="refreshStatuses()">
+                Refresh Status
+            </button>
+
+            <p class="refresh-note" id="last-updated">
+                Workflow status has not been checked yet.
+            </p>
         </div>
 
     </section>
@@ -393,9 +456,77 @@
 
 <footer>
     DevOps Capstone Project | Docker Web Application
-    <br><br>
+    <br>
     Built with HTML, CSS, Docker and GitHub Actions
 </footer>
+
+<script>
+    const repository =
+        "bhavanasutagatti-cyber/docker-web-application";
+
+    async function checkWorkflow(filename, elementId) {
+        const element = document.getElementById(elementId);
+
+        element.className = "status running";
+        element.textContent = "Checking...";
+
+        try {
+            const response = await fetch(
+                `https://api.github.com/repos/${repository}/actions/workflows/${filename}/runs?per_page=1`,
+                {
+                    headers: {
+                        "Accept": "application/vnd.github+json"
+                    }
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("GitHub API request failed");
+            }
+
+            const data = await response.json();
+            const run = data.workflow_runs &&
+                        data.workflow_runs[0];
+
+            if (!run) {
+                element.className = "status";
+                element.textContent = "No workflow runs";
+                return;
+            }
+
+            if (run.status !== "completed") {
+                element.className = "status running";
+                element.textContent = "In progress";
+            } else if (run.conclusion === "success") {
+                element.className = "status success";
+                element.textContent = "Passed ✓";
+            } else {
+                element.className = "status failure";
+                element.textContent = "Failed ✗";
+            }
+
+        } catch (error) {
+            element.className = "status";
+            element.textContent = "Status unavailable";
+        }
+    }
+
+    async function refreshStatuses() {
+        const updated = document.getElementById("last-updated");
+
+        updated.textContent = "Checking GitHub Actions...";
+
+        await Promise.all([
+            checkWorkflow("docker-image.yml", "build-status"),
+            checkWorkflow("test.yml", "test-status")
+        ]);
+
+        updated.textContent =
+            "Last checked: " + new Date().toLocaleString();
+    }
+
+    refreshStatuses();
+</script>
 
 </body>
 </html>
