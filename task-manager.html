@@ -2,188 +2,143 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Task Manager | DevOps Project</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0f172a;
-      color: #e2e8f0;
-      padding: 30px 16px;
-    }
-    .container { max-width: 850px; margin: auto; }
-    h1 { color: #38bdf8; }
-    .subtitle { color: #94a3b8; }
-    .panel {
-      background: #172033;
-      border: 1px solid #334155;
-      border-radius: 12px;
-      padding: 22px;
-      margin-top: 22px;
-    }
-    .form {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    input, select, button {
-      padding: 12px;
-      border-radius: 7px;
-      border: 1px solid #475569;
-      font-size: 15px;
-    }
-    input { flex: 1; min-width: 180px; }
-    input, select {
-      background: #0f172a;
-      color: white;
-    }
-    button {
-      background: #0284c7;
-      color: white;
-      cursor: pointer;
-      border: none;
-    }
-    button:hover { background: #0369a1; }
-    .task {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      border-bottom: 1px solid #334155;
-      padding: 15px 0;
-    }
-    .task:last-child { border-bottom: none; }
-    .task.done .task-name {
-      text-decoration: line-through;
-      color: #94a3b8;
-    }
-    .task-name { overflow-wrap: anywhere; }
-    .actions { display: flex; gap: 8px; }
-    .delete { background: #dc2626; }
-    .delete:hover { background: #b91c1c; }
-    .stats { color: #7dd3fc; margin-top: 15px; }
-    .back { color: #7dd3fc; text-decoration: none; }
-    footer { margin-top: 25px; color: #94a3b8; font-size: 13px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevOps Task Manager</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+body{font-family:Arial,sans-serif;background:#101827;color:#fff;margin:0;padding:30px}
+main{max-width:700px;margin:30px auto;background:#1d293b;padding:28px;border-radius:16px}
+h1{color:#65d6ad}
+input,select,button{padding:12px;margin:5px 0;border:0;border-radius:7px}
+input{width:55%}
+button{cursor:pointer;background:#65d6ad;color:#10251e;font-weight:bold}
+.task{background:#29384c;padding:14px;margin:10px 0;border-radius:8px;overflow-wrap:anywhere}
+small{color:#c2cede}
+#status{color:#ffd479}
+</style>
 </head>
 <body>
-  <main class="container">
-    <a class="back" href="index.html">← Back to DevOps Dashboard</a>
-    <h1>My Task Manager</h1>
-    <p class="subtitle">Organize tasks, track progress, and get things done.</p>
+<main>
+<h1>DevOps Task Manager</h1>
+<p>Manage your tasks with cloud database storage.</p>
 
-    <section class="panel">
-      <h2>Add a task</h2>
-      <form id="task-form" class="form">
-        <input id="task-input" type="text"
-          placeholder="Enter a task..." maxlength="150" required>
-        <select id="task-priority" aria-label="Task priority">
-          <option value="Low">Low priority</option>
-          <option value="Medium" selected>Medium priority</option>
-          <option value="High">High priority</option>
-        </select>
-        <button type="submit">Add Task</button>
-      </form>
-      <p id="stats" class="stats">0 tasks</p>
-    </section>
+<div id="auth">
+<h3>Sign in or create an account</h3>
+<input id="email" type="email" placeholder="Email address">
+<input id="password" type="password" placeholder="Password">
+<br>
+<button onclick="signUp()">Create account</button>
+<button onclick="signIn()">Sign in</button>
+</div>
 
-    <section class="panel">
-      <h2>My Tasks</h2>
-      <div id="task-list">
-        <p class="subtitle">No tasks yet. Add your first task above!</p>
-      </div>
-    </section>
+<div id="app" hidden>
+<p id="welcome"></p>
+<button onclick="signOut()">Sign out</button>
+<hr>
+<input id="taskTitle" placeholder="Enter a task">
+<select id="priority">
+<option>Low</option><option selected>Medium</option><option>High</option>
+</select>
+<button onclick="addTask()">Add task</button>
+<div id="tasks"></div>
+</div>
+<p id="status">Add your Supabase project details in the code first.</p>
+</main>
 
-    <footer>
-      DevOps Capstone · Task Manager · HTML, CSS and JavaScript
-    </footer>
-  </main>
+<script>
+const SUPABASE_URL = "https://supabase.com/dashboard";
+const SUPABASE_KEY = "sb_publishable_jObnxEUtgH_u4KpA0e-qBQ_UbTOxxbX";
 
-  <script>
-    const form = document.getElementById("task-form");
-    const input = document.getElementById("task-input");
-    const priority = document.getElementById("task-priority");
-    const list = document.getElementById("task-list");
-    const stats = document.getElementById("stats");
+const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let currentUser = null;
 
-    let tasks = [];
+function status(message){
+  document.getElementById("status").textContent = message;
+}
 
-    function renderTasks() {
-      list.replaceChildren();
+async function signUp(){
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  if(!email || password.length < 6){
+    status("Enter an email and a password with at least 6 characters.");
+    return;
+  }
+  const {error} = await client.auth.signUp({email,password});
+  status(error ? error.message : "Account request sent. Check your email if confirmation is required, then sign in.");
+}
 
-      if (tasks.length === 0) {
-        const empty = document.createElement("p");
-        empty.className = "subtitle";
-        empty.textContent = "No tasks yet. Add your first task above!";
-        list.appendChild(empty);
-      }
+async function signIn(){
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const {data,error} = await client.auth.signInWithPassword({email,password});
+  if(error){status(error.message);return;}
+  currentUser = data.user;
+  document.getElementById("auth").hidden = true;
+  document.getElementById("app").hidden = false;
+  document.getElementById("welcome").textContent = "Signed in as " + currentUser.email;
+  await loadTasks();
+  status("Connected to Supabase.");
+}
 
-      tasks.forEach(task => {
-        const row = document.createElement("div");
-        row.className = "task" + (task.done ? " done" : "");
+async function signOut(){
+  await client.auth.signOut();
+  currentUser = null;
+  document.getElementById("auth").hidden = false;
+  document.getElementById("app").hidden = true;
+  document.getElementById("tasks").innerHTML = "";
+  status("Signed out.");
+}
 
-        const details = document.createElement("div");
-        const name = document.createElement("div");
-        name.className = "task-name";
-        name.textContent = task.name;
+async function loadTasks(){
+  const {data,error} = await client.from("tasks")
+    .select("*").order("created_at",{ascending:false});
+  if(error){status(error.message);return;}
+  const list = document.getElementById("tasks");
+  list.innerHTML = "";
+  data.forEach(task=>{
+    const item = document.createElement("div");
+    item.className = "task";
+    const title = document.createElement("span");
+    title.textContent = (task.completed ? "✅ " : "📝 ") + task.title;
+    const info = document.createElement("small");
+    info.textContent = " — " + task.priority;
+    const complete = document.createElement("button");
+    complete.textContent = task.completed ? "Undo" : "Complete";
+    complete.onclick = ()=>updateTask(task.id,{completed:!task.completed});
+    const remove = document.createElement("button");
+    remove.textContent = "Delete";
+    remove.onclick = ()=>deleteTask(task.id);
+    item.append(title,info,document.createElement("br"),complete,remove);
+    list.appendChild(item);
+  });
+}
 
-        const label = document.createElement("small");
-        label.className = "subtitle";
-        label.textContent = "Priority: " + task.priority;
+async function addTask(){
+  const title = document.getElementById("taskTitle").value.trim();
+  if(!title){status("Enter a task title.");return;}
+  const {error} = await client.from("tasks").insert({
+    title,
+    priority:document.getElementById("priority").value,
+    user_id:currentUser.id
+  });
+  if(error){status(error.message);return;}
+  document.getElementById("taskTitle").value = "";
+  status("Task saved to the database.");
+  await loadTasks();
+}
 
-        details.append(name, label);
+async function updateTask(id,changes){
+  const {error} = await client.from("tasks").update(changes).eq("id",id);
+  if(error){status(error.message);return;}
+  await loadTasks();
+}
 
-        const actions = document.createElement("div");
-        actions.className = "actions";
-
-        const toggle = document.createElement("button");
-        toggle.textContent = task.done ? "Undo" : "Complete";
-        toggle.addEventListener("click", () => {
-          task.done = !task.done;
-          renderTasks();
-        });
-
-        const remove = document.createElement("button");
-        remove.className = "delete";
-        remove.textContent = "Delete";
-        remove.addEventListener("click", () => {
-          tasks = tasks.filter(item => item.id !== task.id);
-          renderTasks();
-        });
-
-        actions.append(toggle, remove);
-        row.append(details, actions);
-        list.appendChild(row);
-      });
-
-      const completed = tasks.filter(task => task.done).length;
-      stats.textContent =
-        `${tasks.length} total · ${completed} completed · ${tasks.length - completed} remaining`;
-    }
-
-    form.addEventListener("submit", event => {
-      event.preventDefault();
-
-      const name = input.value.trim();
-      if (!name) return;
-
-      tasks.push({
-        id: Date.now() + Math.random(),
-        name,
-        priority: priority.value,
-        done: false
-      });
-
-      input.value = "";
-      renderTasks();
-      input.focus();
-    });
-
-    renderTasks();
-  </script>
+async function deleteTask(id){
+  const {error} = await client.from("tasks").delete().eq("id",id);
+  if(error){status(error.message);return;}
+  await loadTasks();
+}
+</script>
 </body>
 </html>
