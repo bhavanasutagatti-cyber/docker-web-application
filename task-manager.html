@@ -3,142 +3,96 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>DevOps Task Manager</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-body{font-family:Arial,sans-serif;background:#101827;color:#fff;margin:0;padding:30px}
-main{max-width:700px;margin:30px auto;background:#1d293b;padding:28px;border-radius:16px}
+*{box-sizing:border-box}
+body{margin:0;padding:30px;font-family:Arial,sans-serif;background:#101827;color:#fff}
+main{max-width:750px;margin:30px auto;background:#1d293b;padding:28px;border-radius:16px}
 h1{color:#65d6ad}
-input,select,button{padding:12px;margin:5px 0;border:0;border-radius:7px}
-input{width:55%}
+input,select,button{padding:12px;margin:5px 3px;border:0;border-radius:7px}
+input{max-width:100%;width:55%}
 button{cursor:pointer;background:#65d6ad;color:#10251e;font-weight:bold}
 .task{background:#29384c;padding:14px;margin:10px 0;border-radius:8px;overflow-wrap:anywhere}
-small{color:#c2cede}
 #status{color:#ffd479}
 </style>
 </head>
 <body>
 <main>
 <h1>DevOps Task Manager</h1>
-<p>Manage your tasks with cloud database storage.</p>
-
-<div id="auth">
-<h3>Sign in or create an account</h3>
-<input id="email" type="email" placeholder="Email address">
-<input id="password" type="password" placeholder="Password">
-<br>
-<button onclick="signUp()">Create account</button>
-<button onclick="signIn()">Sign in</button>
-</div>
-
-<div id="app" hidden>
-<p id="welcome"></p>
-<button onclick="signOut()">Sign out</button>
-<hr>
+<p>Add, track and manage your tasks — no login required.</p>
 <input id="taskTitle" placeholder="Enter a task">
 <select id="priority">
 <option>Low</option><option selected>Medium</option><option>High</option>
 </select>
-<button onclick="addTask()">Add task</button>
+<button id="addBtn">Add Task</button>
+<p id="status">Connecting to database...</p>
 <div id="tasks"></div>
-</div>
-<p id="status">Add your Supabase project details in the code first.</p>
 </main>
-
 <script>
 const SUPABASE_URL = "https://ktaswyjryxxnnlunzvaf.supabase.co";
 const SUPABASE_KEY = "sb_publishable_jObnxEUtgH_u4KpA0e-qBQ_UbTOxxbX";
+const client = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-let currentUser = null;
-
-function status(message){
-  document.getElementById("status").textContent = message;
-}
-
-async function signUp(){
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  if(!email || password.length < 6){
-    status("Enter an email and a password with at least 6 characters.");
-    return;
-  }
-  const {error} = await client.auth.signUp({email,password});
-  status(error ? error.message : "Account request sent. Check your email if confirmation is required, then sign in.");
-}
-
-async function signIn(){
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-  const {data,error} = await client.auth.signInWithPassword({email,password});
-  if(error){status(error.message);return;}
-  currentUser = data.user;
-  document.getElementById("auth").hidden = true;
-  document.getElementById("app").hidden = false;
-  document.getElementById("welcome").textContent = "Signed in as " + currentUser.email;
-  await loadTasks();
-  status("Connected to Supabase.");
-}
-
-async function signOut(){
-  await client.auth.signOut();
-  currentUser = null;
-  document.getElementById("auth").hidden = false;
-  document.getElementById("app").hidden = true;
-  document.getElementById("tasks").innerHTML = "";
-  status("Signed out.");
+function showStatus(message){
+  document.getElementById("status").textContent=message;
 }
 
 async function loadTasks(){
-  const {data,error} = await client.from("tasks")
-    .select("*").order("created_at",{ascending:false});
-  if(error){status(error.message);return;}
-  const list = document.getElementById("tasks");
-  list.innerHTML = "";
+  const {data,error}=await client.from("tasks")
+    .select("id,title,priority,completed")
+    .is("user_id",null)
+    .order("created_at",{ascending:false});
+  if(error){showStatus("Database error: "+error.message);return;}
+  const list=document.getElementById("tasks");
+  list.replaceChildren();
   data.forEach(task=>{
-    const item = document.createElement("div");
-    item.className = "task";
-    const title = document.createElement("span");
-    title.textContent = (task.completed ? "✅ " : "📝 ") + task.title;
-    const info = document.createElement("small");
-    info.textContent = " — " + task.priority;
-    const complete = document.createElement("button");
-    complete.textContent = task.completed ? "Undo" : "Complete";
-    complete.onclick = ()=>updateTask(task.id,{completed:!task.completed});
-    const remove = document.createElement("button");
-    remove.textContent = "Delete";
-    remove.onclick = ()=>deleteTask(task.id);
-    item.append(title,info,document.createElement("br"),complete,remove);
-    list.appendChild(item);
+    const card=document.createElement("div");
+    card.className="task";
+    const title=document.createElement("span");
+    title.textContent=(task.completed?"✅ ":"📝 ")+task.title+" — "+task.priority+" ";
+    const complete=document.createElement("button");
+    complete.textContent=task.completed?"Undo":"Complete";
+    complete.onclick=()=>updateTask(task.id,{completed:!task.completed});
+    const remove=document.createElement("button");
+    remove.textContent="Delete";
+    remove.onclick=()=>deleteTask(task.id);
+    card.append(title,complete,remove);
+    list.append(card);
   });
+  showStatus("Connected. "+data.length+" task(s) loaded.");
 }
 
 async function addTask(){
-  const title = document.getElementById("taskTitle").value.trim();
-  if(!title){status("Enter a task title.");return;}
-  const {error} = await client.from("tasks").insert({
+  const title=document.getElementById("taskTitle").value.trim();
+  if(!title){showStatus("Enter a task first.");return;}
+  const {error}=await client.from("tasks").insert({
     title,
     priority:document.getElementById("priority").value,
-    user_id:currentUser.id
+    user_id:null
   });
-  if(error){status(error.message);return;}
-  document.getElementById("taskTitle").value = "";
-  status("Task saved to the database.");
+  if(error){showStatus("Could not add task: "+error.message);return;}
+  document.getElementById("taskTitle").value="";
   await loadTasks();
 }
 
 async function updateTask(id,changes){
-  const {error} = await client.from("tasks").update(changes).eq("id",id);
-  if(error){status(error.message);return;}
+  const {error}=await client.from("tasks").update(changes)
+    .eq("id",id).is("user_id",null);
+  if(error){showStatus("Could not update task: "+error.message);return;}
   await loadTasks();
 }
 
 async function deleteTask(id){
-  const {error} = await client.from("tasks").delete().eq("id",id);
-  if(error){status(error.message);return;}
+  const {error}=await client.from("tasks").delete()
+    .eq("id",id).is("user_id",null);
+  if(error){showStatus("Could not delete task: "+error.message);return;}
   await loadTasks();
 }
+
+document.getElementById("addBtn").addEventListener("click",addTask);
+loadTasks();
 </script>
 </body>
 </html>
